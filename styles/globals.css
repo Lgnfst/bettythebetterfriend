@@ -1,0 +1,439 @@
+:root {
+  --primary-color: #0070f3;
+  --secondary-color: #ff4081;
+  --background-color: #f5f5f5;
+  --card-background: #ffffff;
+  --text-color: #333333;
+  --light-text: #666666;
+  --border-color: #eaeaea;
+  --success-color: #4caf50;
+  --warning-color: #ff9800;
+  --error-color: #f44336;
+  --mock-badge-color: #ff9800;
+  --verified-badge-color: #4caf50;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
+    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.container {
+  min-height: 100vh;
+  padding: 0 0.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.main {
+  padding: 2rem 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+}
+
+.footer {
+  width: 100%;
+  height: 60px;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.title {
+  margin: 0;
+  line-height: 1.15;
+  font-size: 3rem;
+  text-align: center;
+}
+
+.title .highlight {
+  color: var(--primary-color);
+}
+
+.description {
+  line-height: 1.5;
+  font-size: 1.5rem;
+  text-align: center;
+  margin: 1rem 0;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.grid {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 800px;
+  margin-top: 2rem;
+}
+
+.card {
+  margin: 1rem;
+  flex-basis: 45%;
+  padding: 1.5rem;
+  text-align: left;
+  color: inherit;
+  text-decoration: none;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  transition: color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+  background-color: var(--card-background);
+}
+
+.card:hover,
+.card:focus,
+.card:active {
+  color: var(--primary-color);
+  border-color: var(--primary-color);
+  transform: translateY(-5px);
+}
+
+.card h2 {
+  margin: 0 0 1rem 0;
+  font-size: 1.5rem;
+}
+
+.card p {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.5;
+}
+
+.mock-badge, .verified-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: bold;
+  margin-left: 0.5rem;
+}
+
+.mock-badge {
+  background-color: var(--mock-badge-color);
+  color: white;
+}
+
+.verified-badge {
+  background-color: var(--verified-badge-color);
+  color: white;
+}
+
+/* Standings Table Styles */
+.standings-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 2rem 0;
+}
+
+.standings-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.standings-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: var(--card-background);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.standings-table th,
+.standings-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.standings-table th {
+  background-color: var(--primary-color);
+  color: white;
+  font-weight: 600;
+}
+
+.team-info {
+  display: flex;
+  align-items: center;
+}
+
+.team-abbr {
+  font-weight: bold;
+  margin-right: 0.5rem;
+  min-width: 40px;
+}
+
+.last-five {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.result {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  line-height: 24px;
+  text-align: center;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: bold;
+}
+
+.win {
+  background-color: var(--success-color);
+  color: white;
+}
+
+.loss {
+  background-color: var(--error-color);
+  color: white;
+}
+
+.data-sources {
+  margin-top: 1rem;
+  font-size: 0.875rem;
+  color: var(--light-text);
+}
+
+/* Player Trend Chart Styles */
+.player-trend-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 2rem 0;
+  background-color: var(--card-background);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.player-info {
+  margin-bottom: 1.5rem;
+}
+
+.player-info h2 {
+  margin: 0;
+  color: var(--primary-color);
+}
+
+.player-info h3 {
+  margin: 0.5rem 0;
+  font-weight: 500;
+  color: var(--light-text);
+}
+
+.notes {
+  font-style: italic;
+  color: var(--warning-color);
+}
+
+.chart-container {
+  margin: 1.5rem 0;
+}
+
+.stats-summary {
+  display: flex;
+  justify-content: space-between;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background-color: var(--background-color);
+  border-radius: 8px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  color: var(--light-text);
+  margin-bottom: 0.25rem;
+}
+
+.stat-value {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+/* Game Prediction Styles */
+.game-prediction-container {
+  width: 100%;
+  max-width: 800px;
+  margin: 2rem 0;
+}
+
+.game-info {
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.game-time {
+  color: var(--light-text);
+}
+
+.prediction-card {
+  background-color: var(--card-background);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.prediction-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.prediction-decision {
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+.decision {
+  display: inline-block;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-weight: bold;
+}
+
+.decision.over {
+  background-color: var(--success-color);
+  color: white;
+}
+
+.decision.under {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.decision-label {
+  display: block;
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.confidence {
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+.odds-display {
+  display: flex;
+  justify-content: space-around;
+  margin: 1.5rem 0;
+}
+
+.odds-item {
+  text-align: center;
+}
+
+.odds-label {
+  display: block;
+  font-size: 0.875rem;
+  color: var(--light-text);
+  margin-bottom: 0.25rem;
+}
+
+.odds-value {
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.reasoning {
+  margin: 1.5rem 0;
+}
+
+.reasoning h4 {
+  margin-bottom: 0.5rem;
+}
+
+/* Form Styles */
+.prediction-form-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 2rem 0;
+}
+
+.prediction-form {
+  background-color: var(--card-background);
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+button {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+button:hover {
+  background-color: #0051a8;
+}
+
+button:disabled {
+  background-color: var(--light-text);
+  cursor: not-allowed;
+}
+
+.error-message {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background-color: #ffebee;
+  color: var(--error-color);
+  border-radius: 4px;
+  text-align: center;
+}
+
