@@ -1,0 +1,29 @@
+{
+  "crons": [
+    {
+      "path": "/api/cron/standings?league=mlb",
+      "schedule": "0 8-23 * * *"
+    },
+    {
+      "path": "/api/cron/standings?league=nba",
+      "schedule": "0 8-23 * * *"
+    },
+    {
+      "path": "/api/cron/standings?league=nfl",
+      "schedule": "0 8-23 * * *"
+    },
+    {
+      "path": "/api/cron/standings?league=mlb",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/standings?league=nba",
+      "schedule": "0 2 * * *"
+    },
+    {
+      "path": "/api/cron/standings?league=nfl",
+      "schedule": "0 2 * * *"
+    }
+  ]
+}
+
