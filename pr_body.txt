@@ -1,0 +1,1 @@
+This PR sets up a React application with a neo-brutal design system as requested.
