@@ -1,0 +1,14 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* small neo-brutal helpers used by the UI */
+:root {
+  --neon-green:#00FF41; --hot-pink:#FF0080; --cyber-blue:#00D4FF; --brutal-black:#000;
+}
+.neo-brutal-border { border: 4px solid var(--brutal-black); }
+.neo-brutal-shadow { box-shadow: 8px 8px 0 var(--brutal-black); }
+.neo-brutal-shadow-pink { box-shadow: 8px 8px 0 var(--hot-pink); }
+.neo-brutal-shadow-blue { box-shadow: 8px 8px 0 var(--cyber-blue); }
+.neo-brutal-shadow-green { box-shadow: 8px 8px 0 var(--neon-green); }
+

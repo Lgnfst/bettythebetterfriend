@@ -1,503 +1,383 @@
 import { createClient } from '@supabase/supabase-js';
-import { Database } from '../src/types/database.types';
 
-// Supabase client
+// Initialize Supabase client
 const supabaseUrl = process.env.SUPABASE_URL || '';
 const supabaseKey = process.env.SUPABASE_ANON_KEY || '';
 
 if (!supabaseUrl || !supabaseKey) {
-  console.error('Missing Supabase environment variables');
+  console.error('Missing Supabase credentials. Set SUPABASE_URL and SUPABASE_ANON_KEY environment variables.');
   process.exit(1);
 }
 
-const supabase = createClient<Database>(supabaseUrl, supabaseKey);
+const supabase = createClient(supabaseUrl, supabaseKey);
 
-// Sample data
-const mlbTeams = [
-  { league: 'mlb', name: 'Los Angeles Dodgers', abbr: 'LAD', provider_ids: { sportsDataIO: 1 } },
-  { league: 'mlb', name: 'New York Yankees', abbr: 'NYY', provider_ids: { sportsDataIO: 2 } },
-  { league: 'mlb', name: 'Boston Red Sox', abbr: 'BOS', provider_ids: { sportsDataIO: 3 } },
-  { league: 'mlb', name: 'Chicago Cubs', abbr: 'CHC', provider_ids: { sportsDataIO: 4 } },
-  { league: 'mlb', name: 'San Francisco Giants', abbr: 'SF', provider_ids: { sportsDataIO: 5 } },
-];
+async function seedDatabase() {
+  console.log('Starting database seed...');
 
-const nbaTeams = [
-  { league: 'nba', name: 'Los Angeles Lakers', abbr: 'LAL', provider_ids: { sportsDataIO: 101 } },
-  { league: 'nba', name: 'Boston Celtics', abbr: 'BOS', provider_ids: { sportsDataIO: 102 } },
-  { league: 'nba', name: 'Golden State Warriors', abbr: 'GSW', provider_ids: { sportsDataIO: 103 } },
-  { league: 'nba', name: 'Chicago Bulls', abbr: 'CHI', provider_ids: { sportsDataIO: 104 } },
-  { league: 'nba', name: 'Miami Heat', abbr: 'MIA', provider_ids: { sportsDataIO: 105 } },
-];
+  // Seed MLB teams
+  const mlbTeams = [
+    { league: 'mlb', name: 'Los Angeles Dodgers', abbr: 'LAD', provider_ids: { sportsdata: 1, mlbstats: 119 } },
+    { league: 'mlb', name: 'New York Yankees', abbr: 'NYY', provider_ids: { sportsdata: 2, mlbstats: 147 } },
+    { league: 'mlb', name: 'Boston Red Sox', abbr: 'BOS', provider_ids: { sportsdata: 3, mlbstats: 111 } },
+    { league: 'mlb', name: 'Chicago Cubs', abbr: 'CHC', provider_ids: { sportsdata: 4, mlbstats: 112 } },
+    { league: 'mlb', name: 'San Francisco Giants', abbr: 'SF', provider_ids: { sportsdata: 5, mlbstats: 137 } },
+  ];
 
-const nflTeams = [
-  { league: 'nfl', name: 'Kansas City Chiefs', abbr: 'KC', provider_ids: { sportsDataIO: 201 } },
-  { league: 'nfl', name: 'San Francisco 49ers', abbr: 'SF', provider_ids: { sportsDataIO: 202 } },
-  { league: 'nfl', name: 'Dallas Cowboys', abbr: 'DAL', provider_ids: { sportsDataIO: 203 } },
-  { league: 'nfl', name: 'Green Bay Packers', abbr: 'GB', provider_ids: { sportsDataIO: 204 } },
-  { league: 'nfl', name: 'Tampa Bay Buccaneers', abbr: 'TB', provider_ids: { sportsDataIO: 205 } },
-];
+  // Seed NBA teams
+  const nbaTeams = [
+    { league: 'nba', name: 'Los Angeles Lakers', abbr: 'LAL', provider_ids: { sportsdata: 101 } },
+    { league: 'nba', name: 'Boston Celtics', abbr: 'BOS', provider_ids: { sportsdata: 102 } },
+    { league: 'nba', name: 'Golden State Warriors', abbr: 'GSW', provider_ids: { sportsdata: 103 } },
+    { league: 'nba', name: 'Chicago Bulls', abbr: 'CHI', provider_ids: { sportsdata: 104 } },
+    { league: 'nba', name: 'Miami Heat', abbr: 'MIA', provider_ids: { sportsdata: 105 } },
+  ];
 
-// Seed function
-async function seed() {
-  console.log('Seeding database...');
-  
-  // Insert MLB teams
-  console.log('Inserting MLB teams...');
-  const { data: mlbData, error: mlbError } = await supabase
-    .from('teams')
-    .insert(mlbTeams)
-    .select();
-  
-  if (mlbError) {
-    console.error('Error inserting MLB teams:', mlbError);
+  // Seed NFL teams
+  const nflTeams = [
+    { league: 'nfl', name: 'Kansas City Chiefs', abbr: 'KC', provider_ids: { sportsdata: 201 } },
+    { league: 'nfl', name: 'San Francisco 49ers', abbr: 'SF', provider_ids: { sportsdata: 202 } },
+    { league: 'nfl', name: 'Dallas Cowboys', abbr: 'DAL', provider_ids: { sportsdata: 203 } },
+    { league: 'nfl', name: 'Green Bay Packers', abbr: 'GB', provider_ids: { sportsdata: 204 } },
+    { league: 'nfl', name: 'Tampa Bay Buccaneers', abbr: 'TB', provider_ids: { sportsdata: 205 } },
+  ];
+
+  // Insert teams
+  console.log('Inserting teams...');
+  const { data: mlbTeamsData, error: mlbTeamsError } = await supabase.from('teams').insert(mlbTeams).select();
+  if (mlbTeamsError) {
+    console.error('Error inserting MLB teams:', mlbTeamsError);
   } else {
-    console.log(`Inserted ${mlbData.length} MLB teams`);
-    
-    // Create sample standings for MLB teams
-    console.log('Creating MLB standings...');
-    const today = new Date().toISOString().split('T')[0];
-    
-    const mlbStandings = mlbData.map((team, index) => ({
+    console.log(`Inserted ${mlbTeamsData.length} MLB teams`);
+  }
+
+  const { data: nbaTeamsData, error: nbaTeamsError } = await supabase.from('teams').insert(nbaTeams).select();
+  if (nbaTeamsError) {
+    console.error('Error inserting NBA teams:', nbaTeamsError);
+  } else {
+    console.log(`Inserted ${nbaTeamsData.length} NBA teams`);
+  }
+
+  const { data: nflTeamsData, error: nflTeamsError } = await supabase.from('teams').insert(nflTeams).select();
+  if (nflTeamsError) {
+    console.error('Error inserting NFL teams:', nflTeamsError);
+  } else {
+    console.log(`Inserted ${nflTeamsData.length} NFL teams`);
+  }
+
+  // Get all teams for player seeding
+  const { data: allTeams, error: allTeamsError } = await supabase.from('teams').select('id, league, abbr');
+  if (allTeamsError) {
+    console.error('Error fetching teams:', allTeamsError);
+    return;
+  }
+
+  // Seed players
+  console.log('Inserting players...');
+  const players = [];
+
+  // MLB players
+  const mlbTeamIds = allTeams.filter(team => team.league === 'mlb').map(team => ({ id: team.id, abbr: team.abbr }));
+  mlbTeamIds.forEach(team => {
+    if (team.abbr === 'LAD') {
+      players.push({
+        league: 'mlb',
+        team_id: team.id,
+        name: 'Mookie Betts',
+        provider_ids: { sportsdata: 10001 },
+      });
+      players.push({
+        league: 'mlb',
+        team_id: team.id,
+        name: 'Freddie Freeman',
+        provider_ids: { sportsdata: 10002 },
+      });
+    } else if (team.abbr === 'NYY') {
+      players.push({
+        league: 'mlb',
+        team_id: team.id,
+        name: 'Aaron Judge',
+        provider_ids: { sportsdata: 10003 },
+      });
+    }
+  });
+
+  // NBA players
+  const nbaTeamIds = allTeams.filter(team => team.league === 'nba').map(team => ({ id: team.id, abbr: team.abbr }));
+  nbaTeamIds.forEach(team => {
+    if (team.abbr === 'LAL') {
+      players.push({
+        league: 'nba',
+        team_id: team.id,
+        name: 'LeBron James',
+        provider_ids: { sportsdata: 20001 },
+      });
+    } else if (team.abbr === 'GSW') {
+      players.push({
+        league: 'nba',
+        team_id: team.id,
+        name: 'Stephen Curry',
+        provider_ids: { sportsdata: 20002 },
+      });
+    }
+  });
+
+  // NFL players
+  const nflTeamIds = allTeams.filter(team => team.league === 'nfl').map(team => ({ id: team.id, abbr: team.abbr }));
+  nflTeamIds.forEach(team => {
+    if (team.abbr === 'KC') {
+      players.push({
+        league: 'nfl',
+        team_id: team.id,
+        name: 'Patrick Mahomes',
+        provider_ids: { sportsdata: 30001 },
+      });
+    } else if (team.abbr === 'SF') {
+      players.push({
+        league: 'nfl',
+        team_id: team.id,
+        name: 'Christian McCaffrey',
+        provider_ids: { sportsdata: 30002 },
+      });
+    }
+  });
+
+  const { data: playersData, error: playersError } = await supabase.from('players').insert(players).select();
+  if (playersError) {
+    console.error('Error inserting players:', playersError);
+  } else {
+    console.log(`Inserted ${playersData.length} players`);
+  }
+
+  // Seed standings
+  console.log('Inserting standings...');
+  const standings = [];
+
+  // MLB standings
+  mlbTeamIds.forEach(team => {
+    const wins = Math.floor(Math.random() * 50) + 50;
+    const losses = 162 - wins;
+    standings.push({
       team_id: team.id,
-      wins: 80 + index,
-      losses: 82 - index,
+      wins,
+      losses,
       ties_or_ots: null,
-      record_as_of: today,
-      streak: index % 2 === 0 ? `W${index + 1}` : `L${index + 1}`,
-      last_five: 'WLWLW',
+      record_as_of: new Date().toISOString().split('T')[0],
+      streak: Math.random() > 0.5 ? `W${Math.floor(Math.random() * 5) + 1}` : `L${Math.floor(Math.random() * 3) + 1}`,
+      last_five: ['W', 'L', 'W', 'L', 'W'].sort(() => Math.random() - 0.5).join(''),
       sources: ['https://sportsdata.io', 'https://statsapi.mlb.com'],
       notes: null,
-    }));
-    
-    const { data: mlbStandingsData, error: mlbStandingsError } = await supabase
-      .from('standings')
-      .insert(mlbStandings)
-      .select();
-    
-    if (mlbStandingsError) {
-      console.error('Error inserting MLB standings:', mlbStandingsError);
-    } else {
-      console.log(`Inserted ${mlbStandingsData.length} MLB standings`);
-    }
-  }
-  
-  // Insert NBA teams
-  console.log('Inserting NBA teams...');
-  const { data: nbaData, error: nbaError } = await supabase
-    .from('teams')
-    .insert(nbaTeams)
-    .select();
-  
-  if (nbaError) {
-    console.error('Error inserting NBA teams:', nbaError);
-  } else {
-    console.log(`Inserted ${nbaData.length} NBA teams`);
-    
-    // Create sample standings for NBA teams
-    console.log('Creating NBA standings...');
-    const today = new Date().toISOString().split('T')[0];
-    
-    const nbaStandings = nbaData.map((team, index) => ({
+    });
+  });
+
+  // NBA standings
+  nbaTeamIds.forEach(team => {
+    const wins = Math.floor(Math.random() * 30) + 20;
+    const losses = 82 - wins;
+    standings.push({
       team_id: team.id,
-      wins: 40 + index,
-      losses: 42 - index,
+      wins,
+      losses,
       ties_or_ots: null,
-      record_as_of: today,
-      streak: index % 2 === 0 ? `W${index + 1}` : `L${index + 1}`,
-      last_five: 'WLWLW',
+      record_as_of: new Date().toISOString().split('T')[0],
+      streak: Math.random() > 0.5 ? `W${Math.floor(Math.random() * 5) + 1}` : `L${Math.floor(Math.random() * 3) + 1}`,
+      last_five: ['W', 'L', 'W', 'L', 'W'].sort(() => Math.random() - 0.5).join(''),
       sources: ['https://sportsdata.io', 'https://www.basketball-reference.com'],
       notes: null,
-    }));
-    
-    const { data: nbaStandingsData, error: nbaStandingsError } = await supabase
-      .from('standings')
-      .insert(nbaStandings)
-      .select();
-    
-    if (nbaStandingsError) {
-      console.error('Error inserting NBA standings:', nbaStandingsError);
-    } else {
-      console.log(`Inserted ${nbaStandingsData.length} NBA standings`);
-    }
-  }
-  
-  // Insert NFL teams
-  console.log('Inserting NFL teams...');
-  const { data: nflData, error: nflError } = await supabase
-    .from('teams')
-    .insert(nflTeams)
-    .select();
-  
-  if (nflError) {
-    console.error('Error inserting NFL teams:', nflError);
-  } else {
-    console.log(`Inserted ${nflData.length} NFL teams`);
-    
-    // Create sample standings for NFL teams
-    console.log('Creating NFL standings...');
-    const today = new Date().toISOString().split('T')[0];
-    
-    const nflStandings = nflData.map((team, index) => ({
+    });
+  });
+
+  // NFL standings
+  nflTeamIds.forEach(team => {
+    const wins = Math.floor(Math.random() * 10) + 2;
+    const losses = 17 - wins;
+    standings.push({
       team_id: team.id,
-      wins: 10 + index,
-      losses: 7 - index,
+      wins,
+      losses,
       ties_or_ots: 0,
-      record_as_of: today,
-      streak: index % 2 === 0 ? `W${index + 1}` : `L${index + 1}`,
-      last_five: 'WLWLW',
+      record_as_of: new Date().toISOString().split('T')[0],
+      streak: Math.random() > 0.5 ? `W${Math.floor(Math.random() * 3) + 1}` : `L${Math.floor(Math.random() * 2) + 1}`,
+      last_five: ['W', 'L', 'W', 'L', 'W'].sort(() => Math.random() - 0.5).join(''),
       sources: ['https://sportsdata.io', 'https://www.pro-football-reference.com'],
       notes: null,
-    }));
-    
-    const { data: nflStandingsData, error: nflStandingsError } = await supabase
-      .from('standings')
-      .insert(nflStandings)
-      .select();
-    
-    if (nflStandingsError) {
-      console.error('Error inserting NFL standings:', nflStandingsError);
+    });
+  });
+
+  const { data: standingsData, error: standingsError } = await supabase.from('standings').insert(standings).select();
+  if (standingsError) {
+    console.error('Error inserting standings:', standingsError);
+  } else {
+    console.log(`Inserted ${standingsData.length} standings`);
+  }
+
+  // Get all players for game logs seeding
+  const { data: allPlayers, error: allPlayersError } = await supabase.from('players').select('id, league, name');
+  if (allPlayersError) {
+    console.error('Error fetching players:', allPlayersError);
+    return;
+  }
+
+  // Seed player game logs
+  console.log('Inserting player game logs...');
+  const gameLogs = [];
+
+  // Generate dates for the last 10 days
+  const dates = [];
+  for (let i = 0; i < 10; i++) {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+    dates.push(date.toISOString().split('T')[0]);
+  }
+
+  // MLB game logs
+  allPlayers.filter(player => player.league === 'mlb').forEach(player => {
+    dates.forEach(date => {
+      gameLogs.push({
+        player_id: player.id,
+        game_date: date,
+        opponent_abbr: ['SF', 'NYY', 'BOS', 'CHC'][Math.floor(Math.random() * 4)],
+        home_away: Math.random() > 0.5 ? 'H' : 'A',
+        stats: {
+          hits: Math.floor(Math.random() * 5),
+          total_bases: Math.floor(Math.random() * 8),
+          hr: Math.floor(Math.random() * 2),
+          rbi: Math.floor(Math.random() * 4),
+          runs: Math.floor(Math.random() * 3),
+          bb: Math.floor(Math.random() * 3),
+          so: Math.floor(Math.random() * 4),
+        },
+        sources: ['https://sportsdata.io'],
+      });
+    });
+  });
+
+  // NBA game logs
+  allPlayers.filter(player => player.league === 'nba').forEach(player => {
+    dates.forEach(date => {
+      gameLogs.push({
+        player_id: player.id,
+        game_date: date,
+        opponent_abbr: ['LAL', 'BOS', 'GSW', 'CHI', 'MIA'][Math.floor(Math.random() * 5)],
+        home_away: Math.random() > 0.5 ? 'H' : 'A',
+        stats: {
+          points: Math.floor(Math.random() * 30) + 10,
+          rebounds: Math.floor(Math.random() * 15),
+          assists: Math.floor(Math.random() * 10),
+          threes: Math.floor(Math.random() * 6),
+        },
+        sources: ['https://sportsdata.io'],
+      });
+    });
+  });
+
+  // NFL game logs
+  allPlayers.filter(player => player.league === 'nfl').forEach(player => {
+    for (let i = 0; i < 5; i++) {
+      const gameDate = new Date();
+      gameDate.setDate(gameDate.getDate() - (i * 7)); // Weekly games
+      gameLogs.push({
+        player_id: player.id,
+        game_date: gameDate.toISOString().split('T')[0],
+        opponent_abbr: ['KC', 'SF', 'DAL', 'GB', 'TB'][Math.floor(Math.random() * 5)],
+        home_away: Math.random() > 0.5 ? 'H' : 'A',
+        stats: {
+          pass_yds: Math.floor(Math.random() * 300) + 100,
+          rush_yds: Math.floor(Math.random() * 100),
+          rec_yds: Math.floor(Math.random() * 100),
+          receptions: Math.floor(Math.random() * 8),
+          pass_td: Math.floor(Math.random() * 4),
+          rush_td: Math.floor(Math.random() * 2),
+          rec_td: Math.floor(Math.random() * 2),
+        },
+        sources: ['https://sportsdata.io'],
+      });
+    }
+  });
+
+  // Insert game logs in batches to avoid exceeding request size limits
+  const batchSize = 100;
+  for (let i = 0; i < gameLogs.length; i += batchSize) {
+    const batch = gameLogs.slice(i, i + batchSize);
+    const { data: gameLogsData, error: gameLogsError } = await supabase.from('player_game_logs').insert(batch);
+    if (gameLogsError) {
+      console.error(`Error inserting game logs batch ${i / batchSize + 1}:`, gameLogsError);
     } else {
-      console.log(`Inserted ${nflStandingsData.length} NFL standings`);
+      console.log(`Inserted game logs batch ${i / batchSize + 1}`);
     }
   }
-  
-  // Create sample players
-  console.log('Creating sample players...');
-  
-  if (mlbData && mlbData.length > 0) {
-    const mlbPlayers = [
-      {
-        league: 'mlb',
-        team_id: mlbData[0].id,
-        name: 'Shohei Ohtani',
-        provider_ids: { sportsDataIO: 1001 },
-      },
-      {
-        league: 'mlb',
-        team_id: mlbData[1].id,
-        name: 'Aaron Judge',
-        provider_ids: { sportsDataIO: 1002 },
-      },
-    ];
-    
-    const { data: mlbPlayersData, error: mlbPlayersError } = await supabase
-      .from('players')
-      .insert(mlbPlayers)
-      .select();
-    
-    if (mlbPlayersError) {
-      console.error('Error inserting MLB players:', mlbPlayersError);
-    } else {
-      console.log(`Inserted ${mlbPlayersData.length} MLB players`);
-      
-      // Create sample game logs for MLB players
-      console.log('Creating MLB player game logs...');
-      
-      const today = new Date();
-      const mlbGameLogs = [];
-      
-      for (const player of mlbPlayersData) {
-        for (let i = 0; i < 10; i++) {
-          const gameDate = new Date(today);
-          gameDate.setDate(today.getDate() - i);
-          
-          mlbGameLogs.push({
-            player_id: player.id,
-            game_date: gameDate.toISOString().split('T')[0],
-            opponent_abbr: i % 2 === 0 ? 'SF' : 'CHC',
-            home_away: i % 2 === 0 ? 'H' : 'A',
-            stats: {
-              hits: Math.floor(Math.random() * 4),
-              hr: Math.floor(Math.random() * 2),
-              rbi: Math.floor(Math.random() * 5),
-              runs: Math.floor(Math.random() * 3),
-              bb: Math.floor(Math.random() * 3),
-              so: Math.floor(Math.random() * 4),
-            },
-            sources: ['https://sportsdata.io'],
-          });
-        }
-      }
-      
-      const { data: mlbGameLogsData, error: mlbGameLogsError } = await supabase
-        .from('player_game_logs')
-        .insert(mlbGameLogs)
-        .select();
-      
-      if (mlbGameLogsError) {
-        console.error('Error inserting MLB game logs:', mlbGameLogsError);
-      } else {
-        console.log(`Inserted ${mlbGameLogsData.length} MLB game logs`);
-      }
-    }
+
+  // Seed odds games
+  console.log('Inserting odds games...');
+  const oddsGames = [];
+
+  // MLB odds games
+  const mlbHomeTeams = mlbTeamIds.slice(0, 2);
+  const mlbAwayTeams = mlbTeamIds.slice(2, 4);
+  mlbHomeTeams.forEach((homeTeam, index) => {
+    const awayTeam = mlbAwayTeams[index];
+    const gameDate = new Date();
+    gameDate.setDate(gameDate.getDate() + 1);
+    gameDate.setHours(19, 0, 0, 0);
+    oddsGames.push({
+      league: 'mlb',
+      home_team_id: homeTeam.id,
+      away_team_id: awayTeam.id,
+      game_datetime: gameDate.toISOString(),
+      market_total: 8.5,
+      odds_total: '-110',
+      sources: ['https://api.the-odds-api.com'],
+    });
+  });
+
+  // NBA odds games
+  const nbaHomeTeams = nbaTeamIds.slice(0, 2);
+  const nbaAwayTeams = nbaTeamIds.slice(2, 4);
+  nbaHomeTeams.forEach((homeTeam, index) => {
+    const awayTeam = nbaAwayTeams[index];
+    const gameDate = new Date();
+    gameDate.setDate(gameDate.getDate() + 1);
+    gameDate.setHours(20, 0, 0, 0);
+    oddsGames.push({
+      league: 'nba',
+      home_team_id: homeTeam.id,
+      away_team_id: awayTeam.id,
+      game_datetime: gameDate.toISOString(),
+      market_total: 220.5,
+      odds_total: '-110',
+      sources: ['https://api.the-odds-api.com'],
+    });
+  });
+
+  // NFL odds games
+  const nflHomeTeams = nflTeamIds.slice(0, 2);
+  const nflAwayTeams = nflTeamIds.slice(2, 4);
+  nflHomeTeams.forEach((homeTeam, index) => {
+    const awayTeam = nflAwayTeams[index];
+    const gameDate = new Date();
+    gameDate.setDate(gameDate.getDate() + (7 - gameDate.getDay())); // Next Sunday
+    gameDate.setHours(13, 0, 0, 0);
+    oddsGames.push({
+      league: 'nfl',
+      home_team_id: homeTeam.id,
+      away_team_id: awayTeam.id,
+      game_datetime: gameDate.toISOString(),
+      market_total: 48.5,
+      odds_total: '-110',
+      sources: ['https://api.the-odds-api.com'],
+    });
+  });
+
+  const { data: oddsGamesData, error: oddsGamesError } = await supabase.from('odds_games').insert(oddsGames).select();
+  if (oddsGamesError) {
+    console.error('Error inserting odds games:', oddsGamesError);
+  } else {
+    console.log(`Inserted ${oddsGamesData.length} odds games`);
   }
-  
-  if (nbaData && nbaData.length > 0) {
-    const nbaPlayers = [
-      {
-        league: 'nba',
-        team_id: nbaData[0].id,
-        name: 'LeBron James',
-        provider_ids: { sportsDataIO: 2001 },
-      },
-      {
-        league: 'nba',
-        team_id: nbaData[2].id,
-        name: 'Stephen Curry',
-        provider_ids: { sportsDataIO: 2002 },
-      },
-    ];
-    
-    const { data: nbaPlayersData, error: nbaPlayersError } = await supabase
-      .from('players')
-      .insert(nbaPlayers)
-      .select();
-    
-    if (nbaPlayersError) {
-      console.error('Error inserting NBA players:', nbaPlayersError);
-    } else {
-      console.log(`Inserted ${nbaPlayersData.length} NBA players`);
-      
-      // Create sample game logs for NBA players
-      console.log('Creating NBA player game logs...');
-      
-      const today = new Date();
-      const nbaGameLogs = [];
-      
-      for (const player of nbaPlayersData) {
-        for (let i = 0; i < 10; i++) {
-          const gameDate = new Date(today);
-          gameDate.setDate(today.getDate() - i);
-          
-          nbaGameLogs.push({
-            player_id: player.id,
-            game_date: gameDate.toISOString().split('T')[0],
-            opponent_abbr: i % 2 === 0 ? 'MIA' : 'CHI',
-            home_away: i % 2 === 0 ? 'H' : 'A',
-            stats: {
-              points: 15 + Math.floor(Math.random() * 20),
-              rebounds: 5 + Math.floor(Math.random() * 10),
-              assists: 3 + Math.floor(Math.random() * 8),
-              threes: Math.floor(Math.random() * 6),
-            },
-            sources: ['https://sportsdata.io'],
-          });
-        }
-      }
-      
-      const { data: nbaGameLogsData, error: nbaGameLogsError } = await supabase
-        .from('player_game_logs')
-        .insert(nbaGameLogs)
-        .select();
-      
-      if (nbaGameLogsError) {
-        console.error('Error inserting NBA game logs:', nbaGameLogsError);
-      } else {
-        console.log(`Inserted ${nbaGameLogsData.length} NBA game logs`);
-      }
-    }
-  }
-  
-  if (nflData && nflData.length > 0) {
-    const nflPlayers = [
-      {
-        league: 'nfl',
-        team_id: nflData[0].id,
-        name: 'Patrick Mahomes',
-        provider_ids: { sportsDataIO: 3001 },
-      },
-      {
-        league: 'nfl',
-        team_id: nflData[0].id,
-        name: 'Travis Kelce',
-        provider_ids: { sportsDataIO: 3002 },
-      },
-    ];
-    
-    const { data: nflPlayersData, error: nflPlayersError } = await supabase
-      .from('players')
-      .insert(nflPlayers)
-      .select();
-    
-    if (nflPlayersError) {
-      console.error('Error inserting NFL players:', nflPlayersError);
-    } else {
-      console.log(`Inserted ${nflPlayersData.length} NFL players`);
-      
-      // Create sample game logs for NFL players
-      console.log('Creating NFL player game logs...');
-      
-      const today = new Date();
-      const nflGameLogs = [];
-      
-      for (const player of nflPlayersData) {
-        for (let i = 0; i < 5; i++) {
-          const gameDate = new Date(today);
-          gameDate.setDate(today.getDate() - i * 7); // NFL games are weekly
-          
-          if (player.name.includes('Mahomes')) {
-            nflGameLogs.push({
-              player_id: player.id,
-              game_date: gameDate.toISOString().split('T')[0],
-              opponent_abbr: i % 2 === 0 ? 'SF' : 'DAL',
-              home_away: i % 2 === 0 ? 'H' : 'A',
-              stats: {
-                pass_yds: 250 + Math.floor(Math.random() * 150),
-                pass_td: 1 + Math.floor(Math.random() * 3),
-                rush_yds: Math.floor(Math.random() * 40),
-                rush_td: Math.floor(Math.random() * 2),
-              },
-              sources: ['https://sportsdata.io'],
-            });
-          } else {
-            nflGameLogs.push({
-              player_id: player.id,
-              game_date: gameDate.toISOString().split('T')[0],
-              opponent_abbr: i % 2 === 0 ? 'SF' : 'DAL',
-              home_away: i % 2 === 0 ? 'H' : 'A',
-              stats: {
-                receptions: 4 + Math.floor(Math.random() * 6),
-                rec_yds: 50 + Math.floor(Math.random() * 70),
-                rec_td: Math.floor(Math.random() * 2),
-              },
-              sources: ['https://sportsdata.io'],
-            });
-          }
-        }
-      }
-      
-      const { data: nflGameLogsData, error: nflGameLogsError } = await supabase
-        .from('player_game_logs')
-        .insert(nflGameLogs)
-        .select();
-      
-      if (nflGameLogsError) {
-        console.error('Error inserting NFL game logs:', nflGameLogsError);
-      } else {
-        console.log(`Inserted ${nflGameLogsData.length} NFL game logs`);
-      }
-    }
-  }
-  
-  // Create sample odds games
-  console.log('Creating sample odds games...');
-  
-  if (mlbData && mlbData.length >= 2) {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    
-    const mlbOddsGames = [
-      {
-        league: 'mlb',
-        away_team_id: mlbData[0].id,
-        home_team_id: mlbData[1].id,
-        game_datetime: tomorrow.toISOString(),
-        market_total: 8.5,
-        odds_total: '-110',
-        sources: ['https://api.the-odds-api.com'],
-      },
-      {
-        league: 'mlb',
-        away_team_id: mlbData[2].id,
-        home_team_id: mlbData[3].id,
-        game_datetime: tomorrow.toISOString(),
-        market_total: 9.0,
-        odds_total: '-105',
-        sources: ['https://api.the-odds-api.com'],
-      },
-    ];
-    
-    const { data: mlbOddsGamesData, error: mlbOddsGamesError } = await supabase
-      .from('odds_games')
-      .insert(mlbOddsGames)
-      .select();
-    
-    if (mlbOddsGamesError) {
-      console.error('Error inserting MLB odds games:', mlbOddsGamesError);
-    } else {
-      console.log(`Inserted ${mlbOddsGamesData.length} MLB odds games`);
-    }
-  }
-  
-  if (nbaData && nbaData.length >= 2) {
-    const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    
-    const nbaOddsGames = [
-      {
-        league: 'nba',
-        away_team_id: nbaData[0].id,
-        home_team_id: nbaData[1].id,
-        game_datetime: tomorrow.toISOString(),
-        market_total: 220.5,
-        odds_total: '-110',
-        sources: ['https://api.the-odds-api.com'],
-      },
-      {
-        league: 'nba',
-        away_team_id: nbaData[2].id,
-        home_team_id: nbaData[3].id,
-        game_datetime: tomorrow.toISOString(),
-        market_total: 215.0,
-        odds_total: '-105',
-        sources: ['https://api.the-odds-api.com'],
-      },
-    ];
-    
-    const { data: nbaOddsGamesData, error: nbaOddsGamesError } = await supabase
-      .from('odds_games')
-      .insert(nbaOddsGames)
-      .select();
-    
-    if (nbaOddsGamesError) {
-      console.error('Error inserting NBA odds games:', nbaOddsGamesError);
-    } else {
-      console.log(`Inserted ${nbaOddsGamesData.length} NBA odds games`);
-    }
-  }
-  
-  if (nflData && nflData.length >= 2) {
-    const nextSunday = new Date();
-    nextSunday.setDate(nextSunday.getDate() + (7 - nextSunday.getDay()));
-    
-    const nflOddsGames = [
-      {
-        league: 'nfl',
-        away_team_id: nflData[0].id,
-        home_team_id: nflData[1].id,
-        game_datetime: nextSunday.toISOString(),
-        market_total: 48.5,
-        odds_total: '-110',
-        sources: ['https://api.the-odds-api.com'],
-      },
-      {
-        league: 'nfl',
-        away_team_id: nflData[2].id,
-        home_team_id: nflData[3].id,
-        game_datetime: nextSunday.toISOString(),
-        market_total: 45.0,
-        odds_total: '-105',
-        sources: ['https://api.the-odds-api.com'],
-      },
-    ];
-    
-    const { data: nflOddsGamesData, error: nflOddsGamesError } = await supabase
-      .from('odds_games')
-      .insert(nflOddsGames)
-      .select();
-    
-    if (nflOddsGamesError) {
-      console.error('Error inserting NFL odds games:', nflOddsGamesError);
-    } else {
-      console.log(`Inserted ${nflOddsGamesData.length} NFL odds games`);
-    }
-  }
-  
-  console.log('Seeding complete!');
+
+  console.log('Database seed completed!');
 }
 
-// Run the seed function
-seed()
+seedDatabase()
   .catch(error => {
     console.error('Error seeding database:', error);
     process.exit(1);
